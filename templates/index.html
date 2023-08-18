@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: lightgray;
+      text-align: center;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    h1 {
+      font-size: 36px;
+      color: rgba(43, 42, 42, 0.822);
+      margin-top: 40px;
+      font-weight: bold;
+    }
+
+    .container {
+      width: 100%;
+      height: 75%;
+      display: flex;
+      justify-content: center;
+    }
+
+    .box {
+      width: 40%;
+      padding: 20px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+    }
+
+    .left {
+      margin-right: 1%;
+    }
+
+    .right {
+      margin-left: 1%;
+    }
+
+    textarea {
+      width: 90%;
+      height: 86%;
+      font-size: 16px;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: none;
+      resize: none;
+    }
+
+    #upload-button {
+      width: 100%;
+      background-color: darkgray;
+      color: white;
+      font-size: 16px;
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+
+    #eng-button:hover {
+      background-color: gray;
+    }
+
+    button#eng-button {
+      background-color: lightgray;
+      color: black;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button#eng-button.active {
+      background-color: darkgray;
+      color: white;
+    }
+
+    #zh-button:hover {
+      background-color: gray;
+    }
+
+    button#zh-button {
+      background-color: lightgray;
+      color: black;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button#zh-button.active {
+      background-color: darkgray;
+      color: white;
+    }
+
+    #zh-button:hover {
+      background-color: gray;
+    }
+
+    nav a {
+      font-weight: bold;
+      color: dimgray;
+      text-decoration: none;
+      margin: 0 20px;
+    }
+  </style>
+  <title>建设合同</title>
+</head>
+
+<body>
+  <h1>FIDIC</h1>
+  <nav>
+    <a href="#">Upload </a> |
+    <a href="#">F1 </a> |
+    <a href="#">F2 </a> |
+    <a href="view-page.html">Contact </a>
+  </nav>
+  <p></p>
+  <button id="eng-button" class="active" onclick="changeLang(this)">Eng</button>
+  <button id="zh-button" onclick="changeLang(this)">中</button>
+  <p></p>
+  <div class="container">
+    <div class="box left">
+      <div class="center-text">
+        <span class="title">Upload Interface</span>
+      </div>
+      <textarea id="contract-text"></textarea>
+      <button id="upload-button" onclick="submitForm()">Submit</button>
+    </div>
+    <div class="box right">
+      <div class="center-text">
+        <span class="title">Display Interface</span>
+      </div>
+      <textarea id="display-text" readonly></textarea>
+    </div>
+  </div>
+  <script>
+    function changeLang(button) {
+      document.getElementById("eng-button").classList.remove("active");
+      document.getElementById("zh-button").classList.remove("active");
+      button.classList.add("active");
+      button.id === "eng-button" ? document.getElementById("zh-button").disabled = false : document.getElementById("eng-button").disabled = false;
+      button.disabled = true;
+    }
+    function submitForm() {
+      var text = document.getElementById("contract-text").value;
+      fetch("http://127.0.0.1:5000/preprocess_text", {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          "text": text
+        })
+      })
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById("display-text").innerHTML = data["output"];
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    }
+
+  </script>
+</body>
